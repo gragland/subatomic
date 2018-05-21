@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-  Inline style props for Emotion and Styled Components.<br/>
+  Inline style props for emotion and styled-components.<br/>
   Spend less time naming things. <i>Iterate faster</i> ⚡️
 </div>
 
@@ -13,7 +13,7 @@
 
 <br/>
 
-Subatomic allows you to style your React components inline so that you can spend more time writing styles and less time thinking of new component names. It integrates with Emotion and Styled Components so that you have the best of both worlds: The power of your favorite css-in-js library plus an inline style system to help you move fast and try out new ideas.
+Subatomic allows you to style your React components inline so that you can spend more time writing styles and less time thinking of new component names. It integrates with emotion and styled-components so that you have the best of both worlds: The power of your favorite css-in-js library plus an inline style system to help you move fast and try out new ideas.
 
 ## 💁 Basic Usage
 
@@ -39,7 +39,7 @@ const Button = styled(subatomic('button'))`
 </Box>
 ```
 
-> If you use Emotion make sure to also install [Emotion Theming](https://www.npmjs.com/package/emotion-theming)<br/>
+> If you use emotion make sure to also install [emotion-theming](https://www.npmjs.com/package/emotion-theming)<br/>
 > If you use Styled Components import from `subatomic/styled-components`
 
 ## 🚀 Advanced
@@ -110,7 +110,7 @@ Sometimes you want to change the underlying element. You can do that with the "i
 
 ## 🤖 Configuration
 
-<b>Basic usage requires no special configuration</b>. To take advantage of responsive props, custom prop names, and design system mapping all you need to do is extend your existing website theme or add one via ThemeProvider if you haven't already (see ThemeProvider docs for [emotion](https://emotion.sh/docs/theming) or [styled components](https://www.styled-components.com/docs/advanced#theming)). Here's a theme that allows for the examples above.
+<b>Basic usage requires no special configuration</b>. To take advantage of responsive props, custom prop names, and design system mapping all you need to do is extend your existing website theme or add one via ThemeProvider if you haven't already (see ThemeProvider docs for [emotion](https://emotion.sh/docs/theming) or [styled-components](https://www.styled-components.com/docs/advanced#theming)). Here's a theme that allows for the examples above.
 
 ```js
 export default {
@@ -195,7 +195,7 @@ export default {
 
 ### Composition Is Your Friend
 
-If you decide you want to turn a chunk of code into a named component you can of course re-write using Emotion or Styled Components syntax, but consider using composition instead and pass along style props using spread syntax.
+If you decide you want to turn a chunk of code into a named component you can of course re-write using `styled()` syntax, but consider using composition instead and pass along style props using spread syntax.
 
 ```jsx
 <Button p={3} bg="blues.medium" color="white" />
@@ -231,7 +231,7 @@ const PageHeading ({ title, subtitle, ...props }) => (
 
 ### Fall Back to Styled When Needed
 
-Subatomic builds on Emotion and Styled Components so that you always have their styling syntax to fall back on when needed. The goal is to help you work faster, not completely change your workflow. Here are some cases where you might want to just create a normal `styled()` component (or use Emotion's `css` prop).
+Subatomic builds on emotion and Styled Components so that you always have their styling syntax to fall back on when needed. The goal is to help you work faster, not completely change your workflow. Here are some cases where you might want to just create a normal `styled()` component (or use emotion's `css` prop).
 
 * You need to do do css animations with `@keyframes`
 * Component has a lot of hover styles and props like `hoverPlaceholderColor` are getting unwieldy
