@@ -40,7 +40,7 @@ const Button = styled(subatomic('button'))`
 ```
 
 > If you use emotion make sure to also install [emotion-theming](https://www.npmjs.com/package/emotion-theming)<br/>
-> If you use Styled Components import from `subatomic/styled-components`
+> If you use styled-components import from `subatomic/styled-components`
 
 ## 🚀 Advanced
 
@@ -236,7 +236,7 @@ Subatomic builds on emotion and Styled Components so that you always have their 
 * You need to do do css animations with `@keyframes`
 * Component has a lot of hover styles and props like `hoverPlaceholderColor` are getting unwieldy
 * Cases where you need more advanced media queries (such as using both min and max width in one rule)
-* You'd rather just use Subatomic for spacing and layout components
+* You'd rather just use subatomic for spacing and layout components
 
 ## 💡 Inspiration
 

@@ -91,4 +91,4 @@ export default {
   }
 };
 
-const isNumber = n => typeof n === 'number' && !isNaN(n);
+const isNumber = n => typeof n === "number" && !isNaN(n);

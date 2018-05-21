@@ -1,5 +1,6 @@
 {
   "name": "subatomic",
+  "version": "0.0.1",
   "main": "emotion.js",
   "license": "MIT",
   "devDependencies": {
