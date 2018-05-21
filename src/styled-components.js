@@ -13,8 +13,11 @@ import isHtmlAttribute from "./validAttr.js"; // Exact copy of file above (minus
 //import isHtmlAttribute from "@emotion/is-prop-valid";
 import blacklistedAttributes from "./blacklisted-attributes.js";
 
+// If no theme then we use the defaultTheme
+import defaultTheme from "./../themes/default.js";
+
 export default tag => {
-  const receiveTheme = ({ theme, ...props }) => {
+  const receiveTheme = ({ theme = defaultTheme, ...props }) => {
     const Subatomic = createSubatomic(tag, theme, theme.props, theme.options);
     return React.createElement(Subatomic, props);
   };
