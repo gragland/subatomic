@@ -1,8 +1,17 @@
 {
   "name": "subatomic",
   "version": "0.0.1",
+  "description": "Inline style props for emotion and styled-components",
   "main": "emotion.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gragland/subatomic"
+  },
+  "author": "Gabe Ragland <gabe.ragland@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/gragland/subatomic/issues"
+  },
   "devDependencies": {
     "babel-core": "6.26.3",
     "babel-loader": "7.1.4",
@@ -18,5 +27,14 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.config.js",
     "prepublish": "npm run build"
-  }
+  },
+  "keywords": [
+    "react",
+    "component",
+    "inline-styles",
+    "css-in-js",
+    "emotion",
+    "styled-components",
+    "design-systems"
+  ]
 }
