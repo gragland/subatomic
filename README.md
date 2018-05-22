@@ -293,7 +293,7 @@ export default {
 }
 ```
 ### Extending the Default Theme
-Here's how you'd extend the above theme to add your color system and props.
+Here's how you'd extend the above theme to add your color system and extra props.
 
 ```js
 import defaultTheme from "subatomic/themes/default";
