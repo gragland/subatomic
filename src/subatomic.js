@@ -1,50 +1,34 @@
 import React from "react";
 import blacklistedStyleProps from "./blacklisted-style-props.js";
 import pseudoclasses from "./pseudoclasses.js";
+import defaultTheme from "./../themes/default.js";
 
 const isBlacklistedStyleProp = prop => blacklistedStyleProps.indexOf(prop) >= 0;
+
+let customPropsCached;
 
 // Cache for styled components (so we're not creating new ones on each render)
 const Cache = createCache();
 
-export const createSubatomic = (
-  tag,
-  theme = {},
-  customProps = {},
-  subatomicOptions = {},
-  getComponent,
-  isValidAttribute
-) => {
-  // Give each prop variation its own style prop
-  customProps = createPropVariations(customProps);
-
-  // Merge options with defaults
-  subatomicOptions = Object.assign(
-    {
-      mustSpecifyProps: false,
-      themeBreakpointsKey: "breakpoints",
-      tagProp: "is"
-    },
-    subatomicOptions
-  );
-
-  const isValidStyleProp = prop => {
-    if (isBlacklistedStyleProp(prop)) return false;
-    if (
-      // If it's a custom prop then it's always valid
-      customProps[prop] ||
-      // If mustSpecifyProps turned off and this prop is not an attribute then it's valid!
-      (subatomicOptions.mustSpecifyProps === false && !isValidAttribute(prop))
-    ) {
-      return true;
-    }
-    return false;
+export const createSubatomic = (tag, getComponent, isValidAttribute) => {
+  const defaultOptions = {
+    themeBreakpointsKey: "breakpoints",
+    tagProp: "is"
   };
+
+  const options = defaultOptions;
+
+  // TODO: Let consumer pass in custom options to createSubatomic
+  /*if (options) {
+    options = Object.assign(defaultOptions, options);
+  } else {
+    options = defaultOptions;
+  }*/
 
   // The returned stateless functional component
   const Subatomic = ({ ...allProps }) => {
     // Destructure tagProp from props and assign value to "is" variable
-    let { [subatomicOptions.tagProp]: is, ...props } = allProps;
+    let { [options.tagProp]: is, ...props } = allProps;
 
     // "is" prop overrides tag so we can change element
     if (is) {
@@ -54,11 +38,9 @@ export const createSubatomic = (
     // Will be the returned react component
     let Component = getComponentWithCache(
       tag,
-      theme,
-      customProps,
-      subatomicOptions,
+      options,
       getComponent,
-      isValidStyleProp
+      isValidAttribute
     );
 
     // Save Component to cache
@@ -70,28 +52,14 @@ export const createSubatomic = (
   return Subatomic;
 };
 
-function getComponentWithCache(
-  tag,
-  theme,
-  customProps,
-  subatomicOptions,
-  getComponent,
-  isValidStyleProp
-) {
+function getComponentWithCache(tag, options, getComponent, isValidAttribute) {
   // Get component from cache by its tag (tag can be string or function reference)
-  // NOTE: Due to caching we can't have multiple of same tag with different ...
-  // ... customProps objects (which would be done by using createSubatomic() directly)
   const CachedComponent = Cache.get(tag);
   if (CachedComponent) {
     return CachedComponent;
   }
 
-  const styleBuilder = createStyleBuilder(
-    theme,
-    customProps,
-    subatomicOptions,
-    isValidStyleProp
-  );
+  const styleBuilder = createStyleBuilder(options, isValidAttribute);
 
   // Get the cache index Component will have once it's added to cache
   // Used to create a deterministic hash for className (since will be same across server and client)
@@ -102,14 +70,7 @@ function getComponentWithCache(
     referenceCacheIndex = cache.byReference.keys.length;
   }
 
-  let Component = getComponent(
-    tag,
-    theme,
-    customProps,
-    subatomicOptions,
-    styleBuilder,
-    referenceCacheIndex
-  );
+  let Component = getComponent(tag, styleBuilder, referenceCacheIndex);
 
   // Save Component to cache
   Cache.put(tag, Component);
@@ -117,15 +78,29 @@ function getComponentWithCache(
   return Component;
 }
 
-function createStyleBuilder(
-  theme,
-  customProps,
-  subatomicOptions,
-  isValidStyleProp
-) {
-  const breakpoints = getBreakpoints(theme, subatomicOptions);
-
+function createStyleBuilder(options, isValidAttribute) {
   const styleBuilder = allProps => {
+    // If theme passed via ThemeProvider then use it!
+    // If not then allProps.theme will be an empty object
+    let theme;
+    if (isEmptyObject(allProps.theme) === false) {
+      theme = allProps.theme;
+    } else if (!theme) {
+      // Otherwise use our basic default theme
+      theme = defaultTheme;
+    }
+
+    let customProps;
+    if (customPropsCached) {
+      customProps = customPropsCached;
+    } else {
+      customProps = createPropVariations(theme.props);
+      customPropsCached = customProps;
+    }
+
+    // TODO: memoize?
+    const breakpoints = getBreakpoints(theme, options);
+
     const buildStyleFromObject = (props, fromPseudoClassObject = false) => {
       let allStyles = {};
 
@@ -134,12 +109,12 @@ function createStyleBuilder(
         const prop = props[propName];
         const propType = typeof prop;
 
-        // We don't need to do this anymore beause we assune all props are style props now
-        // Before we only did that when nested in pseudoclass object
-        // Will need to add this back in if we allow user to change mustSpecifyProps option
-        //if (!isValidStyleProp(propName) && !fromPseudoClassObject) {
-
-        if (!isValidStyleProp(propName)) {
+        // Skip this style prop if blacklisted (not a style prop)
+        // Or if not a custom style prop and it is a valid attribute
+        if (
+          isBlacklistedStyleProp(propName) ||
+          (!customProps[propName] && isValidAttribute(propName))
+        ) {
           continue;
         }
 
@@ -292,8 +267,8 @@ function createPropVariations(props) {
   return props;
 }
 
-function getBreakpoints(theme, subatomicOptions) {
-  return theme[subatomicOptions.themeBreakpointsKey].map(bp => {
+function getBreakpoints(theme, options) {
+  return theme[options.themeBreakpointsKey].map(bp => {
     return `@media screen and (min-width: ${bp})`;
   });
 }
@@ -357,3 +332,6 @@ function get(obj, path, def) {
     return !(step && (obj = obj[step]) === undefined);
   }
 }
+
+const isEmptyObject = obj =>
+  Object.keys(obj).length === 0 && obj.constructor === Object;

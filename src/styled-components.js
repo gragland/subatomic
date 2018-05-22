@@ -1,6 +1,6 @@
 import React from "react";
 import { createSubatomic as createSubatomicBase } from "./subatomic.js";
-import styled, { withTheme, css } from "styled-components";
+import styled from "styled-components";
 // We can't import directly from styled-components/src because ...
 // ... we'd want webpack to treat as external (not bundle with lib), but consuming project ...
 // ... won't be able to parse depending on their babel/webpack. Also it breaks our lib if sc changes.
@@ -13,23 +13,16 @@ import isHtmlAttribute from "./validAttr.js"; // Exact copy of file above (minus
 //import isHtmlAttribute from "@emotion/is-prop-valid";
 import blacklistedAttributes from "./blacklisted-attributes.js";
 
-// If no theme then we use the defaultTheme
-import defaultTheme from "./../themes/default.js";
-
 export default tag => {
-  const receiveTheme = ({ theme = defaultTheme, ...props }) => {
-    const Subatomic = createSubatomic(tag, theme, theme.props, theme.options);
+  return props => {
+    const Subatomic = createSubatomic(tag);
     return React.createElement(Subatomic, props);
   };
-  return withTheme(receiveTheme);
 };
 
-export function createSubatomic(tag, theme, props, options) {
+function createSubatomic(tag) {
   return createSubatomicBase(
     tag,
-    theme,
-    props,
-    options,
     getComponent,
     // We pass this in so that we can re-use emotion/sc whitelist for lower bundle size
     isValidAttribute
@@ -38,23 +31,20 @@ export function createSubatomic(tag, theme, props, options) {
 
 function getComponent(
   tag, // string or component
-  theme,
-  customProps,
-  subatomicOptions,
   styleBuilder,
   componentNumber
 ) {
   let createStyled;
 
   if (typeof tag === "string") {
-    // We now filter using isHtmlAttribute()
+    // We now filter using isValidAttribute()
     //const Root = styled(tag)``; // So whitelist filters out invalid element attributes
 
     const Filter = props => {
-      // Only pass props to DOM element if they are valid html attributes and are not a custom prop
+      // Only pass props to DOM element if they are valid html attributes
       let next = {};
       for (let key in props) {
-        if (!customProps[key] && isValidAttribute(key)) {
+        if (isValidAttribute(key)) {
           next[key] = props[key];
         }
       }
@@ -77,8 +67,8 @@ function getComponent(
     });
   } else {
     // This appears to work but to be safe sticking with original code for now
-    // Pretty sure we ran into style inheritance issues that we're solves by generating classname now ...
-    // ... rather then in root subatomic element or we'd have css ordering issues
+    // Pretty sure we ran into style inheritance issues that were solved by generating classname now ...
+    // ... rather then in root subatomic element.
     //return tag;
 
     // Since we can't rely on tag (a function) to have a displayName ...

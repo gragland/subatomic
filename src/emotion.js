@@ -1,52 +1,40 @@
 import React from "react";
 import styled, { cx } from "react-emotion";
-import { withTheme } from "emotion-theming";
 import { createSubatomic as createSubatomicBase } from "./subatomic.js";
 import emotionIsPropValid from "@emotion/is-prop-valid";
 import blacklistedAttributes from "./blacklisted-attributes.js";
 
-// If no theme then we use the defaultTheme
-import defaultTheme from "./../themes/default.js";
-
 export default tag => {
-  const receiveTheme = ({ theme = defaultTheme, ...props }) => {
-    const Subatomic = createSubatomic(tag, theme, theme.props, theme.options);
+  return props => {
+    const Subatomic = createSubatomic(tag);
     return React.createElement(Subatomic, props);
   };
-  return withTheme(receiveTheme);
 };
 
-export function createSubatomic(tag, theme, props, options) {
+function createSubatomic(tag) {
   return createSubatomicBase(
     tag,
-    theme,
-    props,
-    options,
     getComponent,
-    // We pass this in so that we can re-use emotion/sc whitelist for lower bundle size
+    // Pass in so we can re-use emotion whitelist for lower bundle size
     isValidAttribute
   );
 }
 
 function getComponent(
   tag, // string or component
-  theme,
-  customProps,
-  subatomicOptions,
   styleBuilder
 ) {
   let createStyled;
 
   if (typeof tag === "string") {
-    const propsToFilter = Object.keys(customProps);
-
-    //const Root = styled(tag);
+    // We now filter using isValidAttribute()
+    //const Root = styled(tag); // So whitelist filters out invalid element attributes
 
     const Filter = ({ parentClassName, ...props }) => {
-      // Only pass props to DOM element if they are valid html attributes and are not a custom prop
+      // Only pass props to DOM element if they are valid html attributes
       let next = {};
       for (let key in props) {
-        if (!customProps[key] && isValidAttribute(key)) {
+        if (isValidAttribute(key)) {
           next[key] = props[key];
         }
       }
