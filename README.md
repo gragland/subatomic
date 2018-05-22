@@ -56,7 +56,7 @@ const Button = styled(subatomic('button'))`
 
 While that's all you need to know to get started, we also support [responsive styles](#-responsive-style-props), [custom prop logic](#-custom-style-props), [pseudo-classes](#-psuedo-classes) and [dynamic elements](#-dynamic-elements). Read on to see how each of these features would affect the code example above.
 
-## 🖥 Responsive Style Props
+## 📲 Responsive Style Props
 
 So let's say you're happy with the awesome website header but everything is way too big on mobile. With just a few tweaks to our example above we can decrease padding and font size on smaller screens.
 ```jsx
@@ -91,8 +91,7 @@ const App = props => (
   </ThemeProvider>
 )
 ```
-Once your theme is made available via `ThemeProvider` subatomic will automatically use those values instead.
-> See ThemeProvider docs for [emotion](https://emotion.sh/docs/theming) or [styled components](https://www.styled-components.com/docs/advanced#theming)
+Once your theme is made available via `ThemeProvider` subatomic will automatically use those values instead. For more info about theming see the ThemeProvider docs for [emotion](https://emotion.sh/docs/theming) or [styled-components](https://www.styled-components.com/docs/advanced#theming).
 
 ## 🌈 Custom Style Props
 
@@ -126,7 +125,7 @@ Use any psuedo-class or pseudo-element by prepending it to the prop name. Here w
 
 ## 🎩 Dynamic Elements
 
-Sometimes you want to change the underlying element. You can do that with the `is` prop. Here we use the component name `Heading` instead of `H1` and make the subheading an `h2` element using the `is` prop. We also make `Button` an `a` element because we want it to be a link that looks like a button.
+Sometimes you want to change the underlying element. You can do that with the `is` prop. In the example below we've renamed `H1` to `Heading` and now use the `is` prop to make the subheading an `h2` element. We also made `Button` an `a` element because we want it to be a link that looks like a button.
 
 ```jsx
 const Heading = subatomic('h1');
@@ -143,7 +142,7 @@ const Heading = subatomic('h1');
   </Button>
 </Box>
 ```
-> You can even pass a component. Example: `<Button is={RouterLink} to="/intro">Get Started</Button>`
+> You can even pass a component. Example: `<Button is={RouterLink} to="/start">Get Started</Button>`
 
 ## 🤹‍♀️ Tips and Tricks
 
@@ -212,25 +211,25 @@ Subatomic builds on emotion and styled-components so that you always have their 
 
 ## 🤖 Theme Configuration
 
-<b>Basic usage requires no special configuration</b>. To take advantage of responsive props, custom prop names, and design system mapping all you need to do is extend your existing website theme or [add one via ThemeProvider](#-responsive-style-props) if you haven't already. Here's a theme that allows for the custom style props we use in our code example above.
+Subatomic will automatically use the following [default theme](https://github.com/gragland/subatomic/blob/master/themes/default.js) which comes with a basic style system and some useful custom props. See the inline comments below for an explanation of each property and a code example at the bottom that shows how to extend this theme to add your own style system and props.
 
 ```js
 export default {
   breakpoints: ['576px', '768px', '992px', '1200px'],
-  colors: { grays: ['#ebedee', '#acb4b9', '#374047'] },
-  fontSizes: [14, 16, 20, 24, 32, 48, 64 ],
-  space: [ 0, 4, 8, 16, 32, 64]
+  space: [0, 4, 8, 16, 32, 64, 128, 256, 512 ],
+  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72],
+  // Custom style props go in the props object
   props: {
-    // Custom style prop
     f: {
-      // Read values from theme.fontSizes
+      // Where to find values in theme
       themeKey: 'fontSizes',
-      // Default unit if not specified
+      // Default unit if none specified
       defaultUnit: 'px',
-      // Actual css property
+      // Resulting css property
       style: 'fontSize'
     },
     color: {
+      // Extend theme and add colors object
       themeKey: 'colors',
       style: 'color'
     },
@@ -238,11 +237,18 @@ export default {
       themeKey: 'colors',
       style: 'backgroundColor'
     },
+    borderColor: {
+      themeKey: 'colors',
+      style: 'borderColor'
+    },
+    d: {
+      style: 'display'
+    },
     p: {
       themeKey: 'space',
       defaultUnit: 'px',
       style: 'padding',
-      // Add directional variations
+      // Directional variations
       variations: {
         pt: 'paddingTop',
         pr: 'paddingRight',
@@ -252,7 +258,23 @@ export default {
         py: ['paddingTop', 'paddingBottom']
       }
     },
-    // Example of an advanced width prop
+    m: {
+      themeKey: 'space',
+      defaultUnit: 'px',
+      style: 'margin',
+      variations: {
+        mt: 'marginTop',
+        mr: 'marginRight',
+        mb: 'marginBottom',
+        ml: 'marginLeft',
+        mx: ['marginLeft', 'marginRight'],
+        my: ['marginTop', 'marginBottom']
+      }
+    },
+    h: {
+      style: 'height'
+    },
+    // Advanced width prop
     w: {
       // Style is a function instead of a string
       style: value => {
@@ -270,8 +292,8 @@ export default {
   }
 }
 ```
-
-To make things easier we provide a [default theme with some custom props](https://github.com/gragland/subatomic/blob/master/themes/default.js) that you can use or build on.
+### Extending the Default Theme
+Here's how you'd extend the above theme to add your color system and props.
 
 ```js
 import defaultTheme from "subatomic/themes/default";
@@ -280,22 +302,38 @@ export default {
   breakpoints: defaultTheme.breakpoints,
   space: defaultTheme.space,
   fontSizes: defaultTheme.fontSizes,
-  colors: {
-    grays: ["#ebedee", "#acb4b9", "#374047"]
+  fonts: {
+    primary: 'avenir, -apple-system, BlinkMacSystemFont',
+    monospace: '"SF Mono", "Roboto Mono", Menlo, monospace'
+  },
+  colors: { 
+    greens: ['#84e47b', '#11cc00', '#0da200'] 
   },
   props: {
     ...defaultTheme.props,
-    // And then add any new ones you want
-    center: {
-      style: () => ({
-        textAlign: "center"
-      })
-    }
+    // And then add any other custom props you want
+    fontFamily: {
+      themeKey: 'fonts',
+      style: 'fontFamily'
+    },
   }
 };
-```
 
-> Feel free to submit your own theme in a pull request if you think it could be useful to others. I'm particularly interested in adding some themes that reproduce design and utility classes of existing ui libraries like tachyons, bulma, etc.
+// App
+import { ThemeProvider } from 'emotion-theming'
+import theme from './theme.js'
+
+const App = props => (
+  <ThemeProvider theme={theme}>
+    {/* ... */}
+  </ThemeProvider>
+)
+```
+Any theme you make available via `ThemeProvider` will override the default theme, so you can either extend (merge in the parts you want) or write your own custom theme.
+
+> Interested in helping us add new themes that mimic the look and utility classes of various UI kits like tachyons, bulma, etc? Feel free to add to our themes directory in a pull request.
+
+
 
 ## 💡 Inspiration
 
