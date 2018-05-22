@@ -27,90 +27,192 @@ Supercharge any component by making `subatomic('element')` the root element.
 import styled from 'emotion';
 import subatomic from 'subatomic/emotion';
 
+// Our components
 const Box = subatomic('div');
+const H1 = subatomic('h1');
 const Button = styled(subatomic('button'))`
-  color: blue;
-  ... other default styles
+  color: white;
+  background-color: blue;
+  &:hover {
+   background-color: lightblue;
+  }
 `
 
-// Now you have style props. Any css property works!
-<Box padding="20px" backgroundColor="#efefef" textAlign="center">
-  <Button color="#374047" fontSize="16px" padding="8px">Hello</Button>
+// Now we have style props! Tweak any style inline.
+<Box padding="20px" backgroundColor="white">
+  <H1 fontSize="48px" fontWeight="700">
+    My Awesome Website
+  </H1>
+  <Box fontSize="32px" fontWeight="300">
+    All other websites are significantly less awesome
+  </Box>
+  <Button backgroundColor="green">
+    Get Started
+  </Button>
 </Box>
 ```
 
-> If you use emotion make sure to also install [emotion-theming](https://www.npmjs.com/package/emotion-theming)<br/>
-> If you use styled-components import from `subatomic/styled-components`
+> If you use styled-components import from `subatomic/styled-components` instead.
 
-## 🚀 Advanced
+While that's all you need to know to get started, we also support [responsive styles](#-responsive-style-props), [custom prop logic](#-custom-style-props), [pseudo-classes](#-psuedo-classes) and [dynamic elements](#-dynamic-elements). Read on to see how each of these features would affect the code example above.
 
-### Responsive Style Props
+## 🖥 Responsive Style Props
 
-Add some breakpoints to your theme and all your style props become responsive.
+So let's say you're happy with the awesome website header but everything is way too big on mobile. With just a few tweaks to our example above we can decrease padding and font size on smaller screens.
+```jsx
+<Box padding={["10px", "20px"]} backgroundColor="white">
+  <H1 fontSize={["32px", "48px"]} fontWeight="700">
+    My Awesome Website
+  </H1>
+  <Box fontSize={["24px", "32px"]} fontWeight="300">
+    All other websites are significantly less awesome
+  </Box>
+  <Button backgroundColor="green">
+    Get Started
+  </Button>
+</Box>
+```
+As you can see we're now passing an array of values to the `padding` and `fontSize` props. These map to an array of screen widths (or "responsive breakpoints"). Subatomic uses a default set of breakpoints, so the above example works without any extra configuration, but you can also override them right in your website theme.
 
 ```jsx
 // theme.js
 export default {
+  // These are the default breakpoints
   breakpoints: ['576px', '768px', '992px', '1200px']
 }
 
-// App.js
-<Button color="#374047" fontSize={['14px', '16px']} padding={['4px', '8px']}>Hello</Button>
+// App
+import { ThemeProvider } from 'emotion-theming'
+import theme from './theme.js'
+
+const App = props => (
+  <ThemeProvider theme={theme}>
+    {/* ... */}
+  </ThemeProvider>
+)
 ```
+Once your theme is made available via `ThemeProvider` subatomic will automatically use those values instead.
+> See ThemeProvider docs for [emotion](https://emotion.sh/docs/theming) or [styled components](https://www.styled-components.com/docs/advanced#theming)
 
-Resulting css:
+## 🌈 Custom Style Props
 
-```css
-.e1q9bg2 {
-  font-size: 14px;
-  padding: 4px;
-}
-
-@media screen and (min-width: 576px) {
-  .e1q9bg2 {
-    font-size: 16px;
-    padding: 8px;
-  }
-}
-```
-
-> ThemeProvider required so subatomic can read `theme.breakpoints` (see docs for [emotion](https://emotion.sh/docs/theming) or [styled components](https://www.styled-components.com/docs/advanced#theming))
-
-### Custom Style Props
-
-Want to change your style prop names or hook them into your design system? We make it easy with just a few tweaks to your theme. In this example it gets color from `theme.colors.grays[2]`, font size from `theme.fontSizes[1]` and padding from `theme.space[2]`.
+Want to use shorter prop names or hook them into your design system? We make that easy as well. In this example we're using some custom props with shorter names (because less typing is cool) and the prop values now map to these locations in our theme: `theme.spacing[i]`, `theme.fontSizes[i]`, `theme.colors.green[2]`.
 
 ```jsx
-<Button color="grays.2" f={1} p={2}>
-  Hello
+<Box p={[2, 3]} bg="white">
+  <H1 f={[5, 6]} fontWeight="700">
+    My Awesome Website
+  </H1>
+  <Box f={[4, 5]} fontWeight="300">
+    All other websites are significantly less awesome
+  </Box>
+  <Button bg="greens.2">
+    Get Started
+  </Button>
+</Box>
+```
+In the [configuration section](#-configuration) we'll show you how actually set this up, but the basic idea is that you can quickly define styles inline without giving the up the wonderful consistency of a design system.
+
+## 👻 Psuedo-classes
+
+Use any psuedo-class or pseudo-element by prepending it to the prop name. Here we modify `<Button>` so that its hover color fits better with its green background-color.
+
+```jsx
+<Button bg="greens.2" hoverBg="greens.1">
+   Get Started
 </Button>
 ```
+> You can even chain multiple pseudo-classes together. For example: `hoverPlaceholderColor`
 
-> See the [configuration section](#-configuration) below to see how props are mapped to values in your theme.
+## 🎩 Dynamic Elements
 
-### Psuedo-classes
-
-Use any psuedo-class or pseudo-element by prepending it to the prop name.
-
-```jsx
-<Button hoverColor="grays.3" disabledOpacity={0.5} disabledCursor="not-allowed">Hello</Button>
-// You can even chain multiple pseudo-classes together
-<Input type="text" hoverPlaceholderColor="blue" />
-```
-
-### Dynamic Elements
-
-Sometimes you want to change the underlying element. You can do that with the "is" prop.
+Sometimes you want to change the underlying element. You can do that with the `is` prop. Here we use the component name `Heading` instead of `H1` and make the subheading an `h2` element using the `is` prop. We also make `Button` an `a` element because we want it to be a link that looks like a button.
 
 ```jsx
-<Heading is="h2">Hello</Heading>
-<Button is="a" href="/">Hello</Button>
-<Button is={RouterLink} to="/">Hello</Button> // You can pass a component too
+const Heading = subatomic('h1');
+
+<Box p={[2, 3]} bg="white">
+  <Heading f={[5, 6]} fontWeight="700">
+    My Awesome Website
+  </Heading>
+  <Heading is="h2" f={[4, 5]} fontWeight="300">
+    All other websites are significantly less awesome
+  </Heading>
+  <Button is="a" href="/start" bg="greens.2" hoverBg="greens.1">
+    Get Started
+  </Button>
+</Box>
+```
+> You can even pass a component. Example: `<Button is={RouterLink} to="/intro">Get Started</Button>`
+
+## 🤹‍♀️ Tips and Tricks
+
+### Composition Is Your Friend
+
+If you decide you want to turn a chunk of code into a named component you can of course re-write using `styled()` syntax, but consider using composition instead and pass along props using `{...props}` (spread syntax).
+
+```jsx
+// Our example from above
+<Box p={[2, 3]} bg="white">
+  <Heading f={[5, 6]} fontWeight="700">
+    My Awesome Website
+  </Heading>
+  <Heading is="h2" f={[4, 5]} fontWeight="300">
+    All other websites are significantly less awesome
+  </Heading>
+  <Button is="a" href="/start" bg="greens.2" hoverBg="greens.1">
+    Get Started
+  </Button>
+</Box>
+
+// ⬇ Becomes a reusable component
+
+const PageHeading ({ title, subtitle, ...props }) => (
+  <Box p={[2, 3]} bg="white" {...props}>
+    <Heading f={[5, 6]} fontWeight="700">
+      {title}
+    </Heading>
+    <Heading is="h2" f={[4, 5]} fontWeight="300">
+      {subtitle}
+    </Heading>
+  </Box>
+);
+
+// Lets also break the button out into its own component
+const GreenButton = props => (
+  <Button 
+    bg="greens.2" 
+    hoverBg="greens.1" 
+    {...props} 
+  />;
+);
+
+// ⬇ Which is rendered like so
+
+<PageHeading
+  title="My Awesome Website"
+  subtitle="All other websites are significantly less awesome"
+  // We can still pass in style props
+  textAlign="center"
+/>
+
+<GreenButton is="a" href="/start">
+  Get Started
+</GreenButton>
 ```
 
-## 🤖 Configuration
+### Fall Back to Styled When Needed
 
-<b>Basic usage requires no special configuration</b>. To take advantage of responsive props, custom prop names, and design system mapping all you need to do is extend your existing website theme or add one via ThemeProvider if you haven't already (see ThemeProvider docs for [emotion](https://emotion.sh/docs/theming) or [styled-components](https://www.styled-components.com/docs/advanced#theming)). Here's a theme that allows for the examples above.
+Subatomic builds on emotion and styled-components so that you always have their styling syntax to fall back on when needed. The goal is to help you work faster, not completely change your workflow. Here are some cases where you might want to just create a normal `styled()` component (or use emotion's `css` prop).
+
+* You need to do do css animations with `@keyframes`
+* Component has a lot of hover styles and props like `hoverPlaceholderColor` are getting unwieldy
+* Cases where you need more advanced media queries (such as using both min and max width in one rule)
+* You'd rather just use subatomic for spacing and layout components
+
+## 🤖 Theme Configuration
+
+<b>Basic usage requires no special configuration</b>. To take advantage of responsive props, custom prop names, and design system mapping all you need to do is extend your existing website theme or [add one via ThemeProvider](#-responsive-style-props) if you haven't already. Here's a theme that allows for the custom style props we use in our code example above.
 
 ```js
 export default {
@@ -131,6 +233,10 @@ export default {
     color: {
       themeKey: 'colors',
       style: 'color'
+    },
+    bg: {
+      themeKey: 'colors',
+      style: 'backgroundColor'
     },
     p: {
       themeKey: 'space',
@@ -190,53 +296,6 @@ export default {
 ```
 
 > Feel free to submit your own theme in a pull request if you think it could be useful to others. I'm particularly interested in adding some themes that reproduce design and utility classes of existing ui libraries like tachyons, bulma, etc.
-
-## 🤹‍♀️ Tips and Tricks
-
-### Composition Is Your Friend
-
-If you decide you want to turn a chunk of code into a named component you can of course re-write using `styled()` syntax, but consider using composition instead and pass along style props using spread syntax.
-
-```jsx
-<Button p={3} bg="blues.medium" color="white" />
-
-⬇
-
-const PrimaryButton = props => <Button p={3} bg="blues.medium" color="white" {...props} />;
-```
-
-```jsx
-<Box mx="auto">
-  <Heading f={[5, 6]} fontWeight="700">
-    My Awesome Website
-  </Heading>
-  <Heading is="h2" f={[2, 3]} mt={3} fontWeight="300">
-    All other websites are significantly less awesome
-  </Heading>
-</Box>
-
-⬇
-
-const PageHeading ({ title, subtitle, ...props }) => (
-  <Box mx="auto" {...props}>
-    <Heading f={[5, 6]} fontWeight="700">
-      {title}
-    </Heading>
-    <Heading is="h2" f={[2, 3]} mt={3} fontWeight="300">
-      {subtitle}
-    </Heading>
-  </Box>
-);
-```
-
-### Fall Back to Styled When Needed
-
-Subatomic builds on emotion and Styled Components so that you always have their styling syntax to fall back on when needed. The goal is to help you work faster, not completely change your workflow. Here are some cases where you might want to just create a normal `styled()` component (or use emotion's `css` prop).
-
-* You need to do do css animations with `@keyframes`
-* Component has a lot of hover styles and props like `hoverPlaceholderColor` are getting unwieldy
-* Cases where you need more advanced media queries (such as using both min and max width in one rule)
-* You'd rather just use subatomic for spacing and layout components
 
 ## 💡 Inspiration
 
