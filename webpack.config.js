@@ -19,10 +19,7 @@ const config = {
     "styled-components": "styled-components",
     emotion: "emotion",
     "react-emotion": "react-emotion",
-    "emotion-theming": "emotion-theming",
-    "@emotion/is-prop-valid": "@emotion/is-prop-valid",
-    "styled-components/src/utils/validAttr":
-      "styled-components/src/utils/validAttr"
+    "@emotion/is-prop-valid": "@emotion/is-prop-valid"
   },
   output: {
     path: __dirname,
