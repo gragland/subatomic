@@ -1,8 +1,8 @@
-import React from "react";
-import styled, { cx } from "react-emotion";
-import { createSubatomic as createSubatomicBase } from "./subatomic.js";
-import emotionIsPropValid from "@emotion/is-prop-valid";
-import blacklistedAttributes from "./blacklisted-attributes.js";
+import React from 'react';
+import styled, { cx } from 'react-emotion';
+import { createSubatomic as createSubatomicBase } from './subatomic.js';
+import emotionIsPropValid from '@emotion/is-prop-valid';
+import blacklistedAttributes from './blacklisted-attributes.js';
 
 export default tag => {
   return props => {
@@ -26,7 +26,7 @@ function getComponent(
 ) {
   let createStyled;
 
-  if (typeof tag === "string") {
+  if (typeof tag === 'string') {
     // We now filter using isValidAttribute()
     //const Root = styled(tag); // So whitelist filters out invalid element attributes
 
@@ -66,7 +66,7 @@ function getComponent(
     ${styleBuilder}
   `;
 
-  if (typeof tag === "string") {
+  if (typeof tag === 'string') {
     // Wrap with function so we can split off className
     const ComponentWrapper = props => {
       // Pass className as parentClassName so emotion doesn't merge styles

@@ -1,7 +1,7 @@
-import React from "react";
-import blacklistedStyleProps from "./blacklisted-style-props.js";
-import pseudoclasses from "./pseudoclasses.js";
-import defaultTheme from "./../themes/default.js";
+import React from 'react';
+import blacklistedStyleProps from './blacklisted-style-props.js';
+import pseudoclasses from './pseudoclasses.js';
+import defaultTheme from './../themes/default.js';
 
 const isBlacklistedStyleProp = prop => blacklistedStyleProps.indexOf(prop) >= 0;
 
@@ -12,8 +12,8 @@ const Cache = createCache();
 
 export const createSubatomic = (tag, getComponent, isValidAttribute) => {
   const defaultOptions = {
-    themeBreakpointsKey: "breakpoints",
-    tagProp: "is"
+    themeBreakpointsKey: 'breakpoints',
+    tagProp: 'is'
   };
 
   const options = defaultOptions;
@@ -65,7 +65,7 @@ function getComponentWithCache(tag, options, getComponent, isValidAttribute) {
   // Used to create a deterministic hash for className (since will be same across server and client)
   // If tag is a string then value will be null (not needed)
   let referenceCacheIndex = null;
-  if (typeof tag === "object") {
+  if (typeof tag === 'object') {
     const cache = Cache.get();
     referenceCacheIndex = cache.byReference.keys.length;
   }
@@ -123,7 +123,7 @@ function createStyleBuilder(options, isValidAttribute) {
 
         // Make config an object if string
         // Could be string if using shorthand or values in pseudoClass style
-        if (typeof config === "string") {
+        if (typeof config === 'string') {
           config = {
             style: config
           };
@@ -144,7 +144,7 @@ function createStyleBuilder(options, isValidAttribute) {
                 remainder.charAt(0).toLowerCase() + remainder.slice(1);
               // Prefix with : or :: depending on whether class or element
               const pseudoPrefixed =
-                (pseudoclasses[key] === "class" ? ":" : "::") + pseudo;
+                (pseudoclasses[key] === 'class' ? ':' : '::') + pseudo;
               // Recursively call build style on remaining portion as a prop
               const result = buildStyleFromObject({ [remainder]: prop }, true);
               // Add to allStyles (or merge if already populated by another prop with same psuedoclass)
@@ -212,9 +212,9 @@ function createStyleBuilder(options, isValidAttribute) {
           }
 
           let styleObj;
-          if (typeof config === "string") {
+          if (typeof config === 'string') {
             styleObj = makeStyle(propValue, config);
-          } else if (typeof config.style === "function") {
+          } else if (typeof config.style === 'function') {
             styleObj = config.style(propValue, propName);
           } else {
             // Otherwise assume config.style is string or array
@@ -274,7 +274,7 @@ function getBreakpoints(theme, options) {
 }
 
 function isNumber(value) {
-  return typeof value === "number" && !isNaN(value);
+  return typeof value === 'number' && !isNaN(value);
 }
 
 function isNegative(value) {
@@ -292,7 +292,7 @@ function createCache() {
   };
   return {
     put: function(key, value) {
-      if (typeof key === "object") {
+      if (typeof key === 'object') {
         const index = cache.byReference.keys.indexOf(key);
         if (index === -1) {
           cache.byReference.keys.push(key);
@@ -307,7 +307,7 @@ function createCache() {
     get: function(key) {
       if (!key) {
         return cache;
-      } else if (typeof key === "object") {
+      } else if (typeof key === 'object') {
         const index = cache.byReference.keys.indexOf(key);
         return cache.byReference.values[index];
       } else {
@@ -321,9 +321,9 @@ function createCache() {
 // From https://gist.github.com/jeneg/9767afdcca45601ea44930ea03e0febf
 function get(obj, path, def) {
   var fullPath = path
-    .replace(/\[/g, ".")
-    .replace(/]/g, "")
-    .split(".")
+    .replace(/\[/g, '.')
+    .replace(/]/g, '')
+    .split('.')
     .filter(Boolean);
 
   return fullPath.every(everyFunc) ? obj : def;

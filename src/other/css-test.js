@@ -1,7 +1,7 @@
-import { all as properties } from "known-css-properties";
-import camelCaseCSS from "camelcase-css";
-import htmlElementAttributes from "react-html-attributes";
-import validAttr from "./validAttr.js";
+import { all as properties } from 'known-css-properties';
+import camelCaseCSS from 'camelcase-css';
+import htmlElementAttributes from 'react-html-attributes';
+import validAttr from './validAttr.js';
 
 const cssObject = {};
 
@@ -21,7 +21,7 @@ const cssAndAttributesNotSvg = [];
 const cssAndAttributesTypes = {};
 for (var i = 0; i < cssAndAttributes.length; i++) {
   for (let key in htmlElementAttributes) {
-    if (key === "elements") continue;
+    if (key === 'elements') continue;
     if (htmlElementAttributes[key].indexOf(cssAndAttributes[i]) >= 0) {
       if (!cssAndAttributesTypes[key]) cssAndAttributesTypes[key] = [];
       cssAndAttributesTypes[key].push(cssAndAttributes[i]);
@@ -38,7 +38,7 @@ for (var i = 0; i < cssAndAttributes.length; i++) {
 // Things that are valid css properties and element attributes, organized by element type
 // This should make it easy to see which ones should always be considered style props (color, width, height, etc) ...
 // ... so long as there is a way to force it as an attribute (like "attrColor")
-console.log("cssAndAttributesTypes", cssAndAttributesTypes);
+console.log('cssAndAttributesTypes', cssAndAttributesTypes);
 
 // Things that are valid css properties and element attributes
 //console.log('cssAndAttributes', cssAndAttributes);
