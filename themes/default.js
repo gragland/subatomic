@@ -1,7 +1,6 @@
-//prettier-ignore
-export default {
+module.exports = {
   breakpoints: ['576px', '768px', '992px', '1200px'],
-  space: [0, 4, 8, 16, 32, 64, 128, 256, 512 ],
+  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 72],
   // Custom style props go in the props object
   props: {
@@ -62,12 +61,12 @@ export default {
     // Advanced width prop
     w: {
       // Style is a function instead of a string
-      style: value => {
+      style: function(value) {
         let width = value;
         // If less than 1 make it a fraction of 100% (1/3 = 33.33...%, etc)
         // Nice for column widths (<Row><Col w={1/3}><Col w={2/3}></Row>)
         if (isNumber(width) && width <= 1) {
-          width = `${width * 100}%`;
+          width = width * 100 + '%';
         }
         return {
           width: width
@@ -75,6 +74,8 @@ export default {
       }
     }
   }
-}
+};
 
-const isNumber = n => typeof n === "number" && !isNaN(n);
+function isNumber(n) {
+  return typeof n === 'number' && !isNaN(n);
+}
