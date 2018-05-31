@@ -5,8 +5,8 @@ import emotionIsPropValid from '@emotion/is-prop-valid';
 import blacklistedAttributes from './blacklisted-attributes.js';
 
 export default tag => {
+  const Subatomic = createSubatomic(tag);
   return props => {
-    const Subatomic = createSubatomic(tag);
     return React.createElement(Subatomic, props);
   };
 };
