@@ -1,6 +1,6 @@
 {
   "name": "subatomic",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Inline style props for emotion and styled-components",
   "main": "emotion.js",
   "license": "MIT",
