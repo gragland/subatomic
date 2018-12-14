@@ -49,6 +49,10 @@ function getComponent(
         }
       }
 
+      // RECENT EXPERIMENT
+      //const Root = styled(tag).attrs(next)``;
+      //return React.createElement(Root);
+
       return React.createElement(tag, next);
 
       // No longer created a root element wrapped with styled() because we do filtering above
@@ -62,9 +66,11 @@ function getComponent(
     // NOTE: createStyled`${styleBuilder}` needs to be on its own line (like it is currently) ...
     // ... as opposed to doing styled(Filter).withConfig()`${styleBuilder}` otherwise there are ...
     // ... issues with style inheritance. Probably a bug with babel plugin.
-    createStyled = styled(Filter).withConfig({
-      displayName: `Tag-${tag}`
-    });
+    createStyled = styled(Filter)
+      .attrs({ suppressClassNameWarning: true })
+      .withConfig({
+        displayName: `Tag-${tag}`
+      });
   } else {
     // This appears to work but to be safe sticking with original code for now
     // Pretty sure we ran into style inheritance issues that were solved by generating classname now ...
@@ -76,10 +82,12 @@ function getComponent(
     // This ensures that the same className hash is generated on both server and client
     // NOTE: Ideally we could just `return tag` here since prop style get regenerated at root anyway ...
     // ... but this caused css ordering issues
-    createStyled = styled(tag).withConfig({
-      //displayName: `Tag()-${tag.displayName || 'unknown'}`
-      displayName: `Tag()-${componentNumber}`
-    });
+    createStyled = styled(tag)
+      .attrs({ suppressClassNameWarning: true })
+      .withConfig({
+        //displayName: `Tag()-${tag.displayName || 'unknown'}`
+        displayName: `Tag()-${componentNumber}`
+      });
   }
 
   return createStyled`
